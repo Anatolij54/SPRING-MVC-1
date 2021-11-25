@@ -6,9 +6,14 @@
 </head>
 <body>
 
-<div th:each="person : ${people}">
-    <a th:href="@{/people/{id}(id=${person.getId()})}" th:text="${person.getName()}">user</a>
-</div>
+
+<table >
+    <tr><th>ID</th><th>NAME</th><th>E-MAIL</th></tr> <!--ряд с ячейками заголовков-->
+    <div th:each="person : ${people}">
+    <tr><td><a th:href="@{/people/{id}(id=${person.getId()})}" th:text="${person.getId()}">user</a></td><td><p th:text="${person.getName()}">VALUE</p></td><td><p th:text="${person.getEmail()}">VALUE</p></td></tr> <!--ряд с ячейками тела таблицы-->
+    </div>
+</table>
+
 
 <br/>
 <hr/>

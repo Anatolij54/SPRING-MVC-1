@@ -1,46 +1,51 @@
 package ru.spring.mvc.dao;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.spring.mvc.model.Person;
 
 
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
 import java.util.List;
 
 @Component
 public class PersonDAO {
-    private static int PEOPLE_COUNT;
-    private List<Person> people;
 
-    {
-        people = new ArrayList<>();
-
-        people.add(new Person(++PEOPLE_COUNT, "Tom"));
-        people.add(new Person(++PEOPLE_COUNT, "Bob"));
-        people.add(new Person(++PEOPLE_COUNT, "Mike"));
-        people.add(new Person(++PEOPLE_COUNT, "Katy"));
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public List<Person> index() {
-        return people;
+        TypedQuery<Person> getPeople = entityManager.createQuery(
+                "SELECT us FROM Person us", Person.class);
+        return getPeople.getResultList();
     }
 
     public Person show(int id) {
-        return people.stream().filter(person -> person.getId() == id).findAny().orElse(null);
+        TypedQuery<Person> getPeople = entityManager.createQuery(
+                "SELECT us FROM Person us WHERE us.id =: personid", Person.class);
+        getPeople.setParameter("personid", id);
+        return getPeople.getSingleResult();
     }
 
+    @Transactional
     public void save(Person person) {
-        person.setId(++PEOPLE_COUNT);
-        people.add(person);
+        entityManager.persist(person);
     }
 
+    @Transactional
     public void update(int id, Person updatedPerson) {
         Person personToBeUpdated = show(id);
-
         personToBeUpdated.setName(updatedPerson.getName());
+        personToBeUpdated.setEmail(updatedPerson.getEmail());
+        entityManager.merge(personToBeUpdated);
     }
 
+    @Transactional
     public void delete(int id) {
-        people.removeIf(p -> p.getId() == id);
+        Person personToBeDeleted = show(id);
+        entityManager.remove(personToBeDeleted);
     }
 }
