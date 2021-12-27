@@ -3,8 +3,8 @@ package ru.spring.mvc.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "people")
-public class Person {
+@Table(name = "userse")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +16,11 @@ public class Person {
     @Column
     private String email;
 
-    public Person() {
+    public User() {
 
     }
 
-    public Person(int id, String name, String email) {
+    public User(int id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;
